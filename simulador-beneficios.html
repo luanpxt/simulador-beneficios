@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Benefícios Flexíveis | iFood Benefícios</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --brand:       #69022D;
+      --brand-dark:  #4F0120;
+      --brand-light: #FFE6F2;
+      --brand-mid:   #9C0142;
+      --hero-bg:     #4F0120;
+      --hero-grad:   linear-gradient(135deg, #9C0142 0%, #69022D 55%, #4F0120 100%);
+      --body-bg:     #F5F5F5;
+      --surface:     #FFFFFF;
+      --text-1:      #1A1A1A;
+      --text-2:      #4B4B4B;
+      --text-3:      #9CA3AF;
+      --border:      #E5E7EB;
+      --border-light:#F0F0F0;
+      --shadow-sm:   0 1px 3px rgba(0,0,0,0.07);
+      --shadow-md:   0 4px 16px rgba(0,0,0,0.09);
+      --shadow-lg:   0 16px 48px rgba(0,0,0,0.14);
+      --radius-sm:   8px;
+      --radius-md:   12px;
+      --radius-lg:   16px;
+      --t:           all 0.2s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Albert Sans', sans-serif; background: var(--body-bg); color: var(--text-1); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    input, select, button, textarea { font-family: inherit; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Header ── */
+    header {
+      background: #FDFDFD;
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .logo-ifood { color: var(--brand); }
+    .logo-sep { color: var(--border); font-weight: 300; margin: 0 8px; font-size: 22px; line-height: 1; }
+    .logo-product { color: var(--text-1); font-weight: 600; font-size: 17px; }
+    .header-cta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--brand);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: var(--t);
+    }
+    .header-cta:hover { background: var(--brand-dark); }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--hero-grad);
+      padding: 56px 40px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.12);
+      color: #FFE6F2;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      color: #FDFDFD;
+      font-size: clamp(26px, 4vw, 44px);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -1.2px;
+      margin-bottom: 14px;
+      max-width: 620px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero h1 em { font-style: normal; color: #FFE6F2; }
+    .hero-sub {
+      color: rgba(255,255,255,0.48);
+      font-size: 16px;
+      max-width: 460px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    /* ── Employee counter ── */
+    .emp-wrapper { display: inline-flex; flex-direction: column; align-items: center; gap: 10px; }
+    .emp-label { color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; }
+    .emp-counter {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-md);
+      padding: 5px;
+      gap: 2px;
+    }
+    .emp-btn {
+      width: 38px; height: 38px;
+      background: rgba(255,255,255,0.07);
+      border: none; color: #fff;
+      font-size: 18px; font-weight: 300;
+      border-radius: var(--radius-sm);
+      cursor: pointer; transition: var(--t);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .emp-btn:hover { background: rgba(255,255,255,0.14); }
+    .emp-btn:active { transform: scale(0.9); }
+    #employee-input {
+      width: 86px; text-align: center;
+      background: transparent; border: none;
+      color: #fff; font-size: 26px; font-weight: 800;
+      outline: none; letter-spacing: -0.5px;
+      font-family: 'Albert Sans', sans-serif;
+    }
+    #employee-input::-webkit-inner-spin-button,
+    #employee-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    /* ── Layout ── */
+    .sim-wrap {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      align-items: start;
+    }
+    .benefits-col { display: flex; flex-direction: column; gap: 10px; }
+    .col-title {
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--text-3);
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 4px;
+    }
+    .col-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── Benefit Card ── */
+    .benefit-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: var(--t);
+      animation: slideUp 0.3s ease both;
+    }
+    .benefit-card:nth-child(1){animation-delay:.04s}.benefit-card:nth-child(2){animation-delay:.08s}
+    .benefit-card:nth-child(3){animation-delay:.12s}.benefit-card:nth-child(4){animation-delay:.16s}
+    .benefit-card:nth-child(5){animation-delay:.20s}.benefit-card:nth-child(6){animation-delay:.24s}
+    .benefit-card:nth-child(7){animation-delay:.28s}
+    .benefit-card:hover { border-color: #D1D5DB; box-shadow: var(--shadow-md); }
+    .benefit-card.is-active { border-color: var(--card-color, var(--brand)); }
+    .benefit-card.is-inactive { opacity: 0.5; }
+    .benefit-card.is-inactive .card-body { display: none; }
+
+    /* Card header */
+    .card-hd {
+      display: flex; align-items: center;
+      padding: 15px 18px; gap: 13px;
+      cursor: pointer;
+    }
+    .cat-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 21px; flex-shrink: 0;
+    }
+    .cat-info { flex: 1; min-width: 0; }
+    .cat-name { font-size: 14px; font-weight: 700; letter-spacing: -0.2px; color: var(--text-1); }
+    .cat-sub  { font-size: 12px; color: var(--text-3); margin-top: 1px; }
+
+    /* Toggle */
+    .toggle-wrap { position: relative; width: 42px; height: 23px; flex-shrink: 0; }
+    .toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--t);
+    }
+    .toggle-track::before {
+      content: '';
+      position: absolute;
+      width: 17px; height: 17px;
+      left: 3px; top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: var(--t);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .toggle-wrap input:checked + .toggle-track { background: var(--card-color, var(--brand)); }
+    .toggle-wrap input:checked + .toggle-track::before { transform: translateX(19px); }
+
+    /* Card body */
+    .card-body { padding: 2px 18px 16px; border-top: 1px solid var(--border-light); }
+    .val-row {
+      display: flex; align-items: baseline; gap: 6px;
+      padding-top: 14px; margin-bottom: 14px;
+    }
+    .val-amount {
+      font-size: 24px; font-weight: 800;
+      color: var(--card-color, var(--brand));
+      letter-spacing: -0.8px;
+      transition: var(--t);
+    }
+    .val-period { font-size: 12px; color: var(--text-3); font-weight: 500; }
+    .vs-badge {
+      margin-left: auto;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 8px; border-radius: 5px;
+    }
+    .vs-badge.above { background: #ECFDF5; color: #059669; }
+    .vs-badge.below { background: #FFF7ED; color: #D97706; }
+    .vs-badge.equal { background: #EFF6FF; color: #2563EB; }
+
+    /* Slider */
+    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .slider-cap { font-size: 11px; color: var(--text-3); flex-shrink: 0; white-space: nowrap; }
+    .slider-wrap { position: relative; flex: 1; padding-top: 22px; }
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%; height: 5px;
+      border-radius: 5px; outline: none;
+      cursor: pointer; display: block;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #fff;
+      border: 2.5px solid var(--card-color, var(--brand));
+      cursor: pointer;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+      transition: transform 0.12s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.18); }
+    input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.28); }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #fff;
+      border: 2.5px solid var(--card-color, var(--brand));
+      cursor: pointer;
+    }
+    .bmark-marker {
+      position: absolute;
+      top: 0; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center;
+      pointer-events: none;
+    }
+    .bmark-tag {
+      background: var(--text-2);
+      color: #fff;
+      font-size: 9px; font-weight: 700;
+      padding: 2px 6px; border-radius: 4px;
+      white-space: nowrap;
+    }
+    .bmark-line { width: 1px; height: 20px; background: #D1D5DB; margin-top: 2px; }
+
+    /* "Já ofereço" section */
+    .ja-section {
+      margin-top: 12px;
+      padding: 11px 13px;
+      background: var(--body-bg);
+      border-radius: var(--radius-sm);
+    }
+    .ja-label {
+      display: flex; align-items: center; gap: 9px;
+      cursor: pointer; user-select: none;
+    }
+    .ja-label input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .ja-checkmark {
+      width: 17px; height: 17px;
+      border: 1.5px solid #D1D5DB;
+      border-radius: 4px;
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: var(--t);
+    }
+    .ja-checkmark::after {
+      content: '';
+      width: 4px; height: 8px;
+      border: 2px solid #fff;
+      border-top: none; border-left: none;
+      transform: rotate(45deg) translate(0px, -1px);
+      display: none;
+    }
+    .ja-label input:checked + .ja-checkmark {
+      background: var(--card-color, var(--brand));
+      border-color: var(--card-color, var(--brand));
+    }
+    .ja-label input:checked + .ja-checkmark::after { display: block; }
+    .ja-text { font-size: 12px; font-weight: 600; color: var(--text-2); }
+
+    /* Valor atual row (hidden by default) */
+    .ja-valor-row {
+      display: flex; align-items: center; gap: 9px;
+      margin-top: 0; padding-top: 0;
+      max-height: 0; opacity: 0; overflow: hidden;
+      transition: max-height 0.28s ease, opacity 0.25s ease, margin-top 0.25s ease, padding-top 0.25s ease;
+    }
+    .ja-valor-row.open {
+      max-height: 48px; opacity: 1;
+      margin-top: 10px; padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+    .ja-val-label { font-size: 12px; font-weight: 600; color: var(--text-3); white-space: nowrap; }
+    .ja-input-wrap {
+      display: flex; align-items: center; gap: 4px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 5px 9px;
+      transition: var(--t);
+    }
+    .ja-input-wrap:focus-within {
+      border-color: var(--card-color, var(--brand));
+      box-shadow: 0 0 0 3px rgba(105,2,45,0.08);
+    }
+    .ja-curr { font-size: 11px; font-weight: 700; color: var(--text-2); }
+    .ja-input-wrap input {
+      width: 64px; border: none; background: transparent;
+      font-size: 13px; font-weight: 700; color: var(--text-1);
+      outline: none; text-align: right;
+      font-family: 'Albert Sans', sans-serif;
+    }
+    .ja-input-wrap input::-webkit-inner-spin-button,
+    .ja-input-wrap input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .ja-period { font-size: 11px; color: var(--text-3); }
+    .ja-arrow { font-size: 13px; color: var(--text-3); }
+    .ja-delta {
+      font-size: 11px; font-weight: 700;
+      padding: 3px 8px; border-radius: 5px;
+      display: none;
+    }
+    .ja-delta.gain { display: inline-block; background: #ECFDF5; color: #059669; }
+    .ja-delta.loss { display: inline-block; background: #FEF2F2; color: #DC2626; }
+    .ja-delta.same { display: inline-block; background: #EFF6FF; color: #2563EB; }
+    .ja-delta.novo { display: inline-block; background: var(--brand-light); color: var(--brand); }
+
+    .insight-tip {
+      margin-top: 11px;
+      padding: 9px 11px;
+      background: var(--body-bg);
+      border-radius: var(--radius-sm);
+      font-size: 12px; color: var(--text-2);
+      line-height: 1.5;
+      display: flex; gap: 7px;
+    }
+    .insight-tip::before { content: '💡'; flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+
+    /* ── Summary Panel ── */
+    .summary-panel { position: sticky; top: 84px; }
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .sum-top {
+      background: var(--hero-grad);
+      padding: 22px 20px 18px;
+    }
+    .sum-top-label {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 5px;
+    }
+    .sum-cost-row { display: flex; align-items: baseline; gap: 5px; }
+    .sum-cost {
+      font-size: 32px; font-weight: 800;
+      color: #FDFDFD; letter-spacing: -1.5px;
+      transition: var(--t);
+    }
+    .sum-period { font-size: 12px; color: rgba(255,255,255,0.35); }
+    .sum-sublabel { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 4px; }
+
+    /* Live comparison */
+    .comp-live { padding: 14px 20px; border-bottom: 1px solid var(--border-light); display: none; }
+    .comp-live.on { display: block; }
+    .comp-live-title {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px;
+      color: var(--text-3); margin-bottom: 9px;
+    }
+    .comp-row {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--text-2);
+      margin-bottom: 4px;
+    }
+    .comp-row strong { font-weight: 600; color: var(--text-1); }
+    .comp-delta-row {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid var(--border);
+      padding-top: 8px; margin-top: 6px;
+    }
+    .comp-delta-lbl { font-size: 12px; font-weight: 700; color: var(--text-1); }
+    .comp-delta-val { font-size: 14px; font-weight: 800; }
+    .comp-delta-val.pos { color: #059669; }
+    .comp-delta-val.neg { color: #DC2626; }
+
+    /* Market bar */
+    .mkt-bar-wrap { padding: 15px 20px 13px; border-bottom: 1px solid var(--border-light); }
+    .mkt-bar-labels {
+      display: flex; justify-content: space-between;
+      font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.3px;
+      color: var(--text-3); margin-bottom: 6px;
+    }
+    .mkt-bar-track { height: 5px; background: var(--border); border-radius: 5px; position: relative; }
+    .mkt-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, #60A5FA, #34D399, #FBBF24, var(--brand));
+      border-radius: 5px;
+      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .mkt-bar-thumb {
+      position: absolute; top: 50%; transform: translate(-50%,-50%);
+      width: 13px; height: 13px;
+      background: #fff; border: 2px solid var(--brand);
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      transition: left 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .mkt-pos-text { font-size: 11px; font-weight: 600; color: var(--text-2); margin-top: 7px; text-align: center; }
+    .mkt-footnote { font-size: 10px; color: var(--text-3); text-align: center; margin-top: 3px; }
+
+    /* Breakdown */
+    .bkdown-wrap { padding: 13px 20px; border-bottom: 1px solid var(--border-light); }
+    .bkdown-item { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 7px; }
+    .bkdown-item:last-child { margin-bottom: 0; }
+    .bkdown-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .bkdown-name { flex: 1; color: var(--text-2); }
+    .bkdown-val { font-weight: 700; color: var(--text-1); }
+
+    /* Totals */
+    .totals-wrap { padding: 13px 20px; }
+    .total-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-2); margin-bottom: 5px; }
+    .total-row span:last-child { font-weight: 600; color: var(--text-1); }
+    .total-row.bold { font-size: 14px; font-weight: 700; color: var(--text-1); border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px; margin-bottom: 0; }
+    .total-row.bold span:last-child { color: var(--brand); font-weight: 800; }
+
+    /* CTA */
+    .cta-wrap { padding: 14px 20px 20px; }
+    .cta-btn {
+      width: 100%; padding: 13px;
+      background: var(--brand); color: #fff;
+      border: none; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: var(--t);
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      font-family: 'Albert Sans', sans-serif;
+      letter-spacing: -0.2px;
+    }
+    .cta-btn:hover { background: var(--brand-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(105,2,45,0.3); }
+    .cta-btn:active { transform: translateY(0); }
+    .cta-sub { text-align: center; font-size: 11px; color: var(--text-3); margin-top: 9px; line-height: 1.5; }
+    .bmark-footnote { font-size: 10px; color: var(--text-3); padding: 0 20px 14px; }
+
+    /* ── Modals ── */
+    .modal-bg {
+      position: fixed; inset: 0;
+      background: rgba(79,1,32,0.55);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.22s;
+      backdrop-filter: blur(3px);
+    }
+    .modal-bg.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      width: 100%; max-width: 480px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(18px) scale(0.97);
+      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative;
+      max-height: 92vh; overflow-y: auto;
+    }
+    .modal-bg.open .modal-box { transform: translateY(0) scale(1); }
+    .modal-box.wide { max-width: 760px; }
+    .modal-x {
+      position: absolute; top: 14px; right: 14px;
+      width: 30px; height: 30px;
+      background: var(--body-bg);
+      border: none; border-radius: 50%;
+      font-size: 15px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-2); transition: var(--t); z-index: 10;
+    }
+    .modal-x:hover { background: var(--border); }
+    .modal-x.light { background: rgba(255,255,255,0.1); color: #fff; }
+    .modal-x.light:hover { background: rgba(255,255,255,0.18); }
+
+    /* Lead form */
+    .lead-hd { padding: 30px 30px 0; }
+    .lead-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--brand-light); color: var(--brand);
+      font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 20px;
+      margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.4px;
+    }
+    .lead-hd h2 { font-size: 21px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 5px; }
+    .lead-hd p { font-size: 13px; color: var(--text-2); }
+    .lead-form { padding: 22px 30px 30px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .fg { display: flex; flex-direction: column; gap: 5px; }
+    .fg.full { grid-column: 1/-1; }
+    .fg label { font-size: 11px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.3px; }
+    .fg input, .fg select {
+      padding: 10px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 14px; outline: none;
+      color: var(--text-1); background: #fff;
+      transition: var(--t);
+      font-family: 'Albert Sans', sans-serif;
+    }
+    .fg input:focus, .fg select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(105,2,45,0.1); }
+    .fg select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg width='11' height='7' viewBox='0 0 11 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5.5 5.5L10 1' stroke='%239CA3AF' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; }
+    .form-btn {
+      width: 100%; margin-top: 16px; padding: 13px;
+      background: var(--brand); color: #fff;
+      border: none; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: var(--t); font-family: 'Albert Sans', sans-serif;
+    }
+    .form-btn:hover { background: var(--brand-dark); }
+    .privacy { text-align: center; font-size: 11px; color: var(--text-3); margin-top: 9px; }
+
+    /* Loading */
+    .loading-view { padding: 56px 30px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+    .spinner { width: 44px; height: 44px; border: 3px solid var(--border); border-top-color: var(--brand); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-view h3 { font-size: 17px; font-weight: 700; }
+    .loading-view p { font-size: 13px; color: var(--text-3); text-align: center; line-height: 1.6; }
+    .dots span { animation: blink 1.2s infinite; }
+    .dots span:nth-child(2) { animation-delay: .2s; }
+    .dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes blink { 0%,80%,100%{opacity:.25} 40%{opacity:1} }
+
+    /* ── Diagnosis ── */
+    .diag-hd {
+      background: var(--hero-grad);
+      padding: 30px 34px 26px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      display: flex; align-items: flex-start; gap: 20px;
+    }
+    .diag-hd-text { flex: 1; }
+    .diag-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.14); color: #FFE6F2;
+      font-size: 10px; font-weight: 700; padding: 4px 10px;
+      border-radius: 20px; margin-bottom: 9px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .diag-hd h2 { color: #FDFDFD; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .diag-hd p { color: rgba(255,255,255,0.4); font-size: 12px; }
+    .score-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .score-svg { width: 84px; height: 84px; }
+    .score-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(255,255,255,0.3); margin-top: 4px; }
+    .diag-body { padding: 0 34px 30px; }
+
+    /* Market hero */
+    .mkt-hero {
+      padding: 20px 22px;
+      border-radius: var(--radius-sm);
+      margin: 24px 0 22px;
+      border: 1px solid;
+    }
+    .mkt-hero.below  { background: #FEF2F2; border-color: #FECACA; }
+    .mkt-hero.average{ background: #FFFBEB; border-color: #FDE68A; }
+    .mkt-hero.above  { background: #ECFDF5; border-color: #A7F3D0; }
+    .mkt-hero.top    { background: var(--brand-light); border-color: #FBCFE8; }
+    .mkt-hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 12px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.4px;
+      margin-bottom: 10px; padding: 5px 11px;
+      border-radius: 6px;
+    }
+    .mkt-hero.below  .mkt-hero-badge { background: #FEE2E2; color: #B91C1C; }
+    .mkt-hero.average.mkt-hero-badge { background: #FEF3C7; color: #92400E; }
+    .mkt-hero.above  .mkt-hero-badge { background: #D1FAE5; color: #065F46; }
+    .mkt-hero.top    .mkt-hero-badge { background: #FCE7F3; color: var(--brand); }
+    /* fix: average needs different selector */
+    .mkt-hero.average .mkt-hero-badge { background: #FEF3C7; color: #92400E; }
+    .mkt-hero-text { font-size: 13px; line-height: 1.7; color: #374151; }
+    .mkt-hero-text strong { font-weight: 700; color: var(--text-1); }
+    .mkt-hero-jump { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.07); font-size: 12px; color: var(--text-2); line-height: 1.65; font-style: italic; }
+
+    /* Impact grid */
+    .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+    .impact-card { background: var(--body-bg); border-radius: var(--radius-sm); padding: 14px; display: flex; align-items: flex-start; gap: 11px; }
+    .impact-icon { width: 32px; height: 32px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+    .impact-val { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+    .impact-lbl { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+    .diag-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--text-3); margin-bottom: 11px; }
+
+    /* Package bars */
+    .pkg-bars { margin-bottom: 22px; }
+    .pkg-bar { margin-bottom: 9px; }
+    .pkg-bar-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .pkg-bar-nm { font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 5px; }
+    .pkg-bar-vl { font-size: 11px; color: var(--text-2); font-weight: 600; }
+    .pkg-bar-track { height: 6px; background: var(--border); border-radius: 5px; overflow: hidden; }
+    .pkg-bar-fill { height: 100%; border-radius: 5px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+    /* Comparison table */
+    .cmp-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; margin-bottom: 22px; }
+    .cmp-table th { text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); padding: 0 8px 8px; border-bottom: 1px solid var(--border); }
+    .cmp-table th:not(:first-child) { text-align: right; }
+    .cmp-table td { padding: 8px; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
+    .cmp-table td:not(:first-child) { text-align: right; font-weight: 600; }
+    .cmp-table tr.total-tr td { background: var(--body-bg); font-weight: 700; font-size: 13px; border-bottom: none; }
+    .cmp-table tr.total-tr td:first-child { border-radius: 6px 0 0 6px; }
+    .cmp-table tr.total-tr td:last-child  { border-radius: 0 6px 6px 0; }
+    .dpos { color: #059669; }
+    .dneg { color: #DC2626; }
+    .dnew { display: inline-flex; background: #ECFDF5; color: #059669; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+    .delta-sum { margin-top: 8px; margin-bottom: 22px; padding: 11px 13px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.6; }
+    .delta-sum.pos { background: #ECFDF5; color: #065F46; }
+    .delta-sum.neg { background: #FEF2F2; color: #991B1B; }
+
+    /* Opportunities */
+    .opp-item { margin-bottom: 14px; padding: 15px; background: var(--body-bg); border-radius: var(--radius-sm); border-left: 3px solid; }
+    .opp-item-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .opp-icon { font-size: 17px; }
+    .opp-name { font-size: 13px; font-weight: 700; }
+    .opp-price { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--text-2); }
+    .opp-text { font-size: 12px; line-height: 1.65; color: var(--text-2); }
+    .opp-text strong { color: var(--text-1); font-weight: 600; }
+
+    /* Diag CTA */
+    .diag-cta { background: var(--brand-light); border-radius: var(--radius-sm); padding: 20px 22px; display: flex; align-items: center; gap: 14px; }
+    .diag-cta-txt h4 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .diag-cta-txt p  { font-size: 12px; color: var(--text-2); }
+    .diag-cta-btn { flex-shrink: 0; padding: 9px 16px; background: var(--brand); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; cursor: pointer; transition: var(--t); white-space: nowrap; font-family: 'Albert Sans', sans-serif; }
+    .diag-cta-btn:hover { background: var(--brand-dark); }
+    .diag-actions { display: flex; gap: 9px; margin-top: 14px; }
+    .btn-ghost { display: flex; align-items: center; gap: 5px; padding: 9px 14px; background: var(--body-bg); color: var(--text-1); border: none; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--t); font-family: 'Albert Sans', sans-serif; }
+    .btn-ghost:hover { background: var(--border); }
+    .btn-outline { display: flex; align-items: center; gap: 5px; padding: 9px 14px; background: transparent; color: var(--text-2); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--t); font-family: 'Albert Sans', sans-serif; }
+    .btn-outline:hover { border-color: var(--text-2); }
+    .diag-footnote { font-size: 10px; color: var(--text-3); margin-top: 14px; line-height: 1.5; }
+
+    /* Totals recap in diag */
+    .totals-recap { background: var(--body-bg); border-radius: var(--radius-sm); padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    .recap-col { text-align: center; }
+    .recap-lbl { font-size: 10px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+    .recap-val { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+    .recap-val span { font-size: 12px; font-weight: 500; color: var(--text-3); }
+    .recap-div { width: 1px; height: 36px; background: var(--border); }
+
+    /* Mobile bar */
+    .mobile-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--hero-grad); padding: 12px 20px; z-index: 50; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .mobile-bar-cost { color: #fff; font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
+    .mobile-bar-lbl { color: rgba(255,255,255,0.35); font-size: 11px; }
+    .mobile-cta { padding: 10px 18px; background: var(--brand); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; font-family: 'Albert Sans', sans-serif; }
+
+    /* Print */
+    @media print {
+      body > *:not(#diag-modal) { display: none !important; }
+      #diag-modal { position: static; background: none; padding: 0; }
+      #diag-modal .modal-box { box-shadow: none; max-height: none; overflow: visible; }
+      .modal-x, .diag-actions, .diag-cta-btn { display: none !important; }
+    }
+
+    /* Responsive */
+    @media (max-width: 880px) {
+      header { padding: 0 18px; }
+      .hero { padding: 40px 18px 48px; }
+      .sim-wrap { grid-template-columns: 1fr; padding: 18px 14px 96px; gap: 14px; }
+      .summary-panel { display: none; }
+      .mobile-bar { display: flex; }
+      .form-grid { grid-template-columns: 1fr; }
+      .impact-grid { grid-template-columns: 1fr; }
+      .diag-hd { flex-direction: column-reverse; gap: 14px; padding: 22px 22px 18px; }
+      .diag-body { padding: 0 22px 22px; }
+      .totals-recap { flex-direction: column; gap: 8px; }
+      .recap-div { width: 80%; height: 1px; }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 23px; }
+      .lead-hd { padding: 22px 20px 0; }
+      .lead-form { padding: 16px 20px 24px; }
+      .diag-cta { flex-direction: column; gap: 12px; }
+    }
+
+    /* Animations */
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pop { from { transform: scale(0.82); } to { transform: scale(1); } }
+    .pop { animation: pop 0.22s cubic-bezier(0.34,1.56,0.64,1); }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+  <div class="logo">
+    <span class="logo-ifood">iFood</span>
+    <span class="logo-sep">|</span>
+    <span class="logo-product">Benefícios</span>
+  </div>
+  <button class="header-cta" onclick="openLeadModal()">
+    Gerar diagnóstico →
+  </button>
+</header>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-pill">🚀 Ferramenta para RH</div>
+  <h1>Monte o pacote ideal de<br><em>benefícios flexíveis</em></h1>
+  <p class="hero-sub">Configure o pacote, informe o que já oferece hoje e veja em tempo real o impacto real da mudança para os seus colaboradores.</p>
+  <div class="emp-wrapper">
+    <span class="emp-label">Número de colaboradores</span>
+    <div class="emp-counter">
+      <button class="emp-btn" id="emp-minus">−</button>
+      <input type="number" id="employee-input" value="150" min="1" max="50000">
+      <button class="emp-btn" id="emp-plus">+</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── Simulator ── -->
+<div class="sim-wrap">
+
+  <!-- Benefits column -->
+  <div class="benefits-col" id="benefits-col">
+    <div class="col-title">Configure os benefícios</div>
+    <!-- Cards injected by JS -->
+  </div>
+
+  <!-- Summary panel -->
+  <aside class="summary-panel">
+    <div class="summary-card">
+      <div class="sum-top">
+        <div class="sum-top-label">Soma dos benefícios configurados</div>
+        <div class="sum-cost-row">
+          <span class="sum-cost" id="sum-cost">R$ 0</span>
+          <span class="sum-period">/colab./mês</span>
+        </div>
+        <div class="sum-sublabel" id="sum-sublabel">Ative benefícios para calcular</div>
+      </div>
+
+      <div class="comp-live" id="comp-live">
+        <div class="comp-live-title">Comparativo com hoje</div>
+        <div class="comp-row"><span>Ideal simulado</span><strong id="cl-ideal">—</strong></div>
+        <div class="comp-row"><span>Pacote atual</span><strong id="cl-atual">—</strong></div>
+        <div class="comp-delta-row">
+          <span class="comp-delta-lbl">Diferença / colab.</span>
+          <span class="comp-delta-val" id="cl-delta">—</span>
+        </div>
+        <div class="comp-row" style="margin-top:5px"><span style="font-size:11px">Total mensal</span><strong id="cl-monthly" style="font-size:11px">—</strong></div>
+        <div class="comp-row"><span style="font-size:11px">Total anual</span><strong id="cl-annual" style="font-size:11px">—</strong></div>
+      </div>
+
+      <div class="mkt-bar-wrap">
+        <div class="mkt-bar-labels"><span>Básico</span><span>Mercado*</span><span>Top 10%</span></div>
+        <div class="mkt-bar-track">
+          <div class="mkt-bar-fill" id="mkt-fill" style="width:0%"></div>
+          <div class="mkt-bar-thumb" id="mkt-thumb" style="left:0%"></div>
+        </div>
+        <div class="mkt-pos-text" id="mkt-text">Configure os benefícios acima</div>
+        <div class="mkt-footnote">* xxxxxxxx</div>
+      </div>
+
+      <div class="bkdown-wrap" id="bkdown"></div>
+
+      <div class="totals-wrap">
+        <div class="total-row">
+          <span>Total mensal (<span id="sum-emp">150</span> colab.)</span>
+          <span id="sum-monthly">R$ 0</span>
+        </div>
+        <div class="total-row bold">
+          <span>Total anual estimado</span>
+          <span id="sum-annual">R$ 0</span>
+        </div>
+      </div>
+
+      <div class="cta-wrap">
+        <button class="cta-btn" onclick="openLeadModal()">
+          Gerar Diagnóstico Completo
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <p class="cta-sub">Benchmarks de mercado, análise de retenção e posicionamento</p>
+      </div>
+      <div class="bmark-footnote">* Benchmarks baseados em: xxxxxxxx</div>
+    </div>
+  </aside>
+</div>
+
+<!-- Mobile bar -->
+<div class="mobile-bar">
+  <div>
+    <div class="mobile-bar-lbl">Por colaborador/mês</div>
+    <div class="mobile-bar-cost" id="mobile-cost">R$ 0</div>
+  </div>
+  <button class="mobile-cta" onclick="openLeadModal()">Ver Diagnóstico →</button>
+</div>
+
+<!-- ── Lead Modal ── -->
+<div class="modal-bg" id="lead-modal">
+  <div class="modal-box">
+    <button class="modal-x" onclick="closeModal('lead-modal')">✕</button>
+    <div id="lead-form-view">
+      <div class="lead-hd">
+        <div class="lead-pill">📊 Diagnóstico personalizado</div>
+        <h2>Seu pacote está pronto!</h2>
+        <p>Deixe seus dados para receber o diagnóstico completo com benchmarks e insights de mercado.</p>
+      </div>
+      <form class="lead-form" onsubmit="handleLeadSubmit(event)">
+        <div class="form-grid">
+          <div class="fg"><label>Nome completo *</label><input type="text" id="f-name" placeholder="Seu nome" required></div>
+          <div class="fg"><label>E-mail corporativo *</label><input type="email" id="f-email" placeholder="voce@empresa.com" required></div>
+          <div class="fg"><label>Empresa *</label><input type="text" id="f-company" placeholder="Nome da empresa" required></div>
+          <div class="fg"><label>Cargo *</label><input type="text" id="f-role" placeholder="Ex: Gerente de RH" required></div>
+          <div class="fg full">
+            <label>Porte da empresa *</label>
+            <select id="f-size" required>
+              <option value="">Selecione o porte</option>
+              <option value="200-500">200 a 500 colaboradores</option>
+              <option value="500-1000">500 a 1.000 colaboradores</option>
+              <option value="1000-5000">1.000 a 5.000 colaboradores</option>
+              <option value="5000+">Acima de 5.000 colaboradores</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="form-btn">Ver meu diagnóstico →</button>
+        <p class="privacy">🔒 Seus dados estão seguros. Sem spam.</p>
+      </form>
+    </div>
+    <div id="lead-loading" style="display:none">
+      <div class="loading-view">
+        <div class="spinner"></div>
+        <h3>Analisando seu pacote<span class="dots"><span>.</span><span>.</span><span>.</span></span></h3>
+        <p>Comparando com benchmarks de mercado<br>e calculando impacto na retenção</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Diagnosis Modal ── -->
+<div class="modal-bg" id="diag-modal">
+  <div class="modal-box wide">
+    <button class="modal-x light" onclick="closeModal('diag-modal')">✕</button>
+    <div id="diag-content"></div>
+  </div>
+</div>
+
+<script>
+  // ── DATA ──────────────────────────────────────────────────────────
+  const BENEFITS = [
+    {
+      id:'alimentacao', name:'Alimentação', sub:'Vale Refeição & Alimentação',
+      icon:'🍔', color:'#C0392B', iconBg:'#FFF0EE',
+      min:400, max:1500, step:1, def:750, benchmark:750, active:true,
+      insight:'89% dos colaboradores brasileiros consideram este o benefício mais importante do pacote.',
+      opp:null
+    },
+    {
+      id:'mobilidade', name:'Mobilidade', sub:'Transporte e locomoção',
+      icon:'🚗', color:'#1D6EF5', iconBg:'#EFF6FF',
+      min:0, max:600, step:1, def:120, benchmark:120, active:true,
+      insight:'Reduz absenteísmo em até 18% em grandes centros. Especialmente valorizado em modelos presenciais e híbridos.',
+      opp:'Valorizado por 64% dos profissionais com commute diário. Empresas que oferecem auxílio mobilidade registram <strong>18% menos dias perdidos</strong> por atraso ou ausência — impacto direto em produtividade que raramente aparece no orçamento de RH, mas se paga sozinho.'
+    },
+    {
+      id:'saude', name:'Saúde & Bem-estar', sub:'Assistência médica e wellness',
+      icon:'🏥', color:'#059669', iconBg:'#ECFDF5',
+      min:0, max:500, step:1, def:180, benchmark:180, active:false,
+      insight:'Empresas com auxílio saúde têm 34% menos afastamentos. Retorno médio de R$2,30 para cada R$1,00 investido.',
+      opp:'Terceiro benefício mais solicitado por profissionais acima de R$5k. Empresas com algum auxílio saúde registram <strong>34% menos afastamentos</strong> e um eNPS 22 pontos acima das que não oferecem. O ROI médio documentado é de <strong>R$2,30 para cada R$1,00 investido</strong> — considerando só a redução em dias perdidos e custos de substituição.'
+    },
+    {
+      id:'educacao', name:'Educação', sub:'Cursos, idiomas e desenvolvimento',
+      icon:'📚', color:'#7C3AED', iconBg:'#F5F3FF',
+      min:0, max:400, step:1, def:100, benchmark:100, active:false,
+      insight:'Colaboradores com acesso a educação têm 2× mais engajamento e 41% menor intenção de saída.',
+      opp:'78% dos profissionais avaliam mais positivamente empresas que investem em desenvolvimento — e o benefício custa menos de <strong>0,5% do salário médio CLT</strong>. Para a geração Z e millennials, desenvolvimento de carreira supera aumento salarial como fator de permanência na empresa.'
+    },
+    {
+      id:'homeoffice', name:'Home Office', sub:'Equipamentos e conectividade',
+      icon:'🏠', color:'#D97706', iconBg:'#FFFBEB',
+      min:0, max:400, step:1, def:80, benchmark:80, active:false,
+      insight:'Top 3 dos benefícios mais solicitados em 2024. Essencial para empresas com modelo híbrido ou remoto.',
+      opp:'Com 62% das empresas brasileiras em modelo híbrido, o auxílio home office saiu de diferencial para <strong>expectativa</strong>. Profissionais com suporte estrutural para trabalho remoto reportam <strong>27% mais satisfação</strong> e produtividade 19% maior do que os que arcam com os custos do próprio bolso.'
+    },
+    {
+      id:'cultura', name:'Cultura & Lazer', sub:'Entretenimento e experiências',
+      icon:'🎭', color:'#DB2777', iconBg:'#FDF2F8',
+      min:0, max:300, step:1, def:80, benchmark:80, active:false,
+      insight:'Diferencial competitivo — apenas 23% das empresas Mid-Market oferecem. Aumenta employer branding em 3×.',
+      opp:'Apenas <strong>23% das empresas Mid-Market</strong> oferecem este benefício — o que significa que ativá-lo coloca você à frente de 77% dos concorrentes na percepção de valor para talentos. Empresas que investem em lazer e bem-estar emocional têm <strong>3× mais menções positivas</strong> em plataformas como Glassdoor e LinkedIn.'
+    },
+    {
+      id:'gift', name:'Gift & Premiação', sub:'Reconhecimento e incentivos',
+      icon:'🎁', color:'#B45309', iconBg:'#FFFBEB',
+      min:0, max:300, step:1, def:60, benchmark:60, active:false,
+      insight:'ROI médio de 3× em produtividade. Estruturar reconhecimento reduz turnover em até 31% no primeiro ano.',
+      opp:'Reconhecimento estruturado é o antídoto mais eficaz contra turnover silencioso. Empresas com programas ativos de premiação registram <strong>31% menos saídas voluntárias</strong> no primeiro ano. O custo de R$60/mês por colaborador é tipicamente <strong>40% menor do que uma semana de processo seletivo</strong> para repor quem saiu.'
+    }
+  ];
+
+  const MKT_TOTAL = BENEFITS.reduce((s,b) => s + b.benchmark, 0); // 1370
+
+  // ── STATE ─────────────────────────────────────────────────────────
+  const S = {
+    employees: 150,
+    values:  {},  // ideal slider value
+    active:  {},  // benefit toggle
+    current: {},  // "hoje" value (0 = not set)
+    jaOfereco: {} // checkbox state
+  };
+
+  BENEFITS.forEach(b => {
+    S.values[b.id]    = b.def;
+    S.active[b.id]    = b.active;
+    S.current[b.id]   = 0;
+    S.jaOfereco[b.id] = false;
+  });
+
+  let leadData = {};
+
+  // ── UTILS ─────────────────────────────────────────────────────────
+  const fmt = n => 'R$ ' + Math.round(n).toLocaleString('pt-BR');
+
+  const perEmployee  = () => BENEFITS.reduce((s,b) => S.active[b.id] ? s + S.values[b.id] : s, 0);
+  const currentTotal = () => BENEFITS.reduce((s,b) => s + (S.current[b.id]||0), 0);
+  const hasCurrentData = () => BENEFITS.some(b => S.jaOfereco[b.id] && (S.current[b.id]||0) > 0);
+
+  const score = () => {
+    const pe = perEmployee(); if (!pe) return 0;
+    const n = BENEFITS.filter(b=>S.active[b.id]).length;
+    return Math.min(100, Math.round((pe/MKT_TOTAL)*60 + (n/BENEFITS.length)*40));
+  };
+
+  const tier = sc => {
+    if (sc < 30)  return { key:'below',   label:'Abaixo do mercado',     pct: sc*1.5 };
+    if (sc < 55)  return { key:'average', label:'Na média do mercado',   pct: 25+(sc-30)*0.9 };
+    if (sc < 78)  return { key:'above',   label:'Acima da média',        pct: 48+(sc-55)*0.9 };
+    return             { key:'top',     label:'Top 10% do mercado 🏆', pct: 70+(sc-78)*1.3 };
+  };
+
+  const vsText = (v, bm) => {
+    const d = v - bm, p = Math.abs(Math.round((d/bm)*100));
+    if (d > 0) return { t:`+${p}% acima da média`, c:'above' };
+    if (d < 0) return { t:`${p}% abaixo da média`, c:'below' };
+    return { t:'Na média', c:'equal' };
+  };
+
+  const deltaDisplay = (ideal, curr) => {
+    const d = ideal - curr;
+    if (d === 0) return { t:'Mesmo valor', c:'same' };
+    const sign = d > 0 ? '+' : '';
+    return { t:`${sign}${fmt(d)}/mês`, c: d > 0 ? 'gain' : 'loss' };
+  };
+
+  const fillSlider = (el, b) => {
+    const pct = ((S.values[b.id]-b.min)/(b.max-b.min))*100;
+    el.style.background = `linear-gradient(to right,${b.color} 0%,${b.color} ${pct}%,#E5E7EB ${pct}%,#E5E7EB 100%)`;
+  };
+
+  // ── RENDER ────────────────────────────────────────────────────────
+  function renderCards() {
+    const col = document.getElementById('benefits-col');
+    const title = col.querySelector('.col-title');
+    col.innerHTML = '';
+    col.appendChild(title);
+
+    BENEFITS.forEach(b => {
+      const card = document.createElement('div');
+      card.className = 'benefit-card' + (S.active[b.id] ? ' is-active' : ' is-inactive');
+      card.style.setProperty('--card-color', b.color);
+
+      const pct = ((S.values[b.id]-b.min)/(b.max-b.min))*100;
+      const vs  = vsText(S.values[b.id], b.benchmark);
+
+      card.innerHTML = `
+        <div class="card-hd" onclick="toggleCard('${b.id}',event)">
+          <div class="cat-icon" style="background:${b.iconBg}">${b.icon}</div>
+          <div class="cat-info">
+            <div class="cat-name">${b.name}</div>
+            <div class="cat-sub">${b.sub}</div>
+          </div>
+          <label class="toggle-wrap" onclick="event.stopPropagation()">
+            <input type="checkbox" id="tog-${b.id}" ${S.active[b.id]?'checked':''} onchange="onToggle('${b.id}',this.checked)">
+            <div class="toggle-track"></div>
+          </label>
+        </div>
+        <div class="card-body">
+          <div class="val-row">
+            <span class="val-amount" id="val-${b.id}">${fmt(S.values[b.id])}</span>
+            <span class="val-period">/mês por colaborador</span>
+            <span class="vs-badge ${vs.c}" id="vs-${b.id}">${vs.t}</span>
+          </div>
+          <div class="slider-row">
+            <span class="slider-cap">${fmt(b.min)}</span>
+            <div class="slider-wrap">
+              <div class="bmark-marker" id="bm-${b.id}">
+                <div class="bmark-tag">Média mercado*</div>
+                <div class="bmark-line"></div>
+              </div>
+              <input type="range" id="sl-${b.id}"
+                min="${b.min}" max="${b.max}" step="${b.step}" value="${S.values[b.id]}"
+                oninput="onSlider('${b.id}',this)"
+                style="background:linear-gradient(to right,${b.color} 0%,${b.color} ${pct}%,#E5E7EB ${pct}%,#E5E7EB 100%)">
+            </div>
+            <span class="slider-cap">${fmt(b.max)}</span>
+          </div>
+
+          <!-- Já ofereço section -->
+          <div class="ja-section" onclick="event.stopPropagation()">
+            <label class="ja-label" for="ja-${b.id}">
+              <input type="checkbox" id="ja-${b.id}" ${S.jaOfereco[b.id]?'checked':''} onchange="onJaOfereco('${b.id}',this.checked)">
+              <span class="ja-checkmark"></span>
+              <span class="ja-text">Já ofereço esse benefício hoje</span>
+            </label>
+            <div class="ja-valor-row ${S.jaOfereco[b.id]?'open':''}" id="ja-wrap-${b.id}">
+              <span class="ja-val-label">Valor atual:</span>
+              <div class="ja-input-wrap">
+                <span class="ja-curr">R$</span>
+                <input type="number" id="curr-${b.id}" min="0" placeholder="0"
+                  value="${S.current[b.id]||''}"
+                  oninput="onCurrentVal('${b.id}',this.value)">
+                <span class="ja-period">/mês</span>
+              </div>
+              <span class="ja-arrow">→</span>
+              <span class="ja-delta" id="jd-${b.id}"></span>
+            </div>
+          </div>
+
+          <div class="insight-tip">${b.insight}</div>
+        </div>
+      `;
+      col.appendChild(card);
+    });
+
+    requestAnimationFrame(() => BENEFITS.forEach(b => placeBmark(b)));
+    syncAllDeltas();
+    updateSummary();
+  }
+
+  function placeBmark(b) {
+    const sl = document.getElementById(`sl-${b.id}`);
+    const mk = document.getElementById(`bm-${b.id}`);
+    if (!sl||!mk) return;
+    const tw=sl.offsetWidth, th=20;
+    mk.style.left = ((b.benchmark-b.min)/(b.max-b.min)*(tw-th)+th/2)+'px';
+  }
+
+  function syncAllDeltas() {
+    BENEFITS.forEach(b => {
+      if (!S.jaOfereco[b.id] || !S.current[b.id]) return;
+      updateDeltaBadge(b.id);
+    });
+  }
+
+  // ── INTERACTIONS ──────────────────────────────────────────────────
+  function onSlider(id, el) {
+    const b = BENEFITS.find(x=>x.id===id);
+    S.values[id] = parseInt(el.value);
+    fillSlider(el, b);
+
+    const vEl = document.getElementById(`val-${id}`);
+    if (vEl) { vEl.textContent = fmt(S.values[id]); vEl.classList.add('pop'); setTimeout(()=>vEl.classList.remove('pop'),220); }
+
+    const vsEl = document.getElementById(`vs-${id}`);
+    if (vsEl) { const v=vsText(S.values[id],b.benchmark); vsEl.textContent=v.t; vsEl.className=`vs-badge ${v.c}`; }
+
+    if (S.jaOfereco[id] && S.current[id]) updateDeltaBadge(id);
+    updateSummary();
+  }
+
+  function onToggle(id, checked) {
+    S.active[id] = checked;
+    const card = document.getElementById(`tog-${id}`)?.closest('.benefit-card');
+    if (card) {
+      card.classList.toggle('is-active', checked);
+      card.classList.toggle('is-inactive', !checked);
+      const body = card.querySelector('.card-body');
+      if (body) body.style.display = checked ? '' : 'none';
+    }
+    if (!checked) {
+      // Clear "já ofereço" when benefit is disabled
+      S.jaOfereco[id] = false;
+      S.current[id] = 0;
+      const jaEl = document.getElementById(`ja-${id}`);
+      if (jaEl) jaEl.checked = false;
+      const wrap = document.getElementById(`ja-wrap-${id}`);
+      if (wrap) wrap.classList.remove('open');
+      const dEl = document.getElementById(`jd-${id}`);
+      if (dEl) { dEl.className='ja-delta'; dEl.textContent=''; }
+    }
+    if (S.jaOfereco[id] && S.current[id]) updateDeltaBadge(id);
+    updateSummary();
+  }
+
+  function onJaOfereco(id, checked) {
+    S.jaOfereco[id] = checked;
+    const wrap = document.getElementById(`ja-wrap-${id}`);
+    if (wrap) wrap.classList.toggle('open', checked);
+
+    if (!checked) {
+      S.current[id] = 0;
+      const inp = document.getElementById(`curr-${id}`);
+      if (inp) inp.value = '';
+      const dEl = document.getElementById(`jd-${id}`);
+      if (dEl) { dEl.className='ja-delta'; dEl.textContent=''; }
+    } else {
+      // If they already had a value typed, re-sync
+      if (S.current[id]) updateDeltaBadge(id);
+    }
+    updateSummary();
+  }
+
+  function onCurrentVal(id, raw) {
+    const v = parseInt(raw) || 0;
+    S.current[id] = v;
+    if (v > 0) updateDeltaBadge(id);
+    else {
+      const dEl = document.getElementById(`jd-${id}`);
+      if (dEl) { dEl.className='ja-delta'; dEl.textContent=''; }
+    }
+    updateSummary();
+  }
+
+  function updateDeltaBadge(id) {
+    const dEl = document.getElementById(`jd-${id}`);
+    if (!dEl) return;
+    const ideal = S.active[id] ? S.values[id] : 0;
+    const curr  = S.current[id] || 0;
+    if (!curr) { dEl.className='ja-delta'; dEl.textContent=''; return; }
+    const d = deltaDisplay(ideal, curr);
+    dEl.className = `ja-delta ${d.c}`;
+    dEl.textContent = d.t;
+  }
+
+  function toggleCard(id, e) {
+    if (e.target.closest('.toggle-wrap')||e.target.closest('.ja-section')||e.target.closest('.insight-tip')) return;
+    const t = document.getElementById(`tog-${id}`);
+    if (t) { t.checked=!t.checked; onToggle(id,t.checked); }
+  }
+
+  // Employee
+  document.getElementById('emp-minus').addEventListener('click',()=>{
+    const el=document.getElementById('employee-input');
+    el.value=Math.max(1,parseInt(el.value||1)-50);
+    S.employees=parseInt(el.value); updateSummary();
+  });
+  document.getElementById('emp-plus').addEventListener('click',()=>{
+    const el=document.getElementById('employee-input');
+    el.value=Math.min(50000,parseInt(el.value||1)+50);
+    S.employees=parseInt(el.value); updateSummary();
+  });
+  document.getElementById('employee-input').addEventListener('input',e=>{
+    S.employees=Math.max(1,Math.min(50000,parseInt(e.target.value)||1)); updateSummary();
+  });
+  window.addEventListener('resize',()=>BENEFITS.forEach(b=>placeBmark(b)));
+
+  // ── SUMMARY UPDATE ────────────────────────────────────────────────
+  function updateSummary() {
+    const pe = perEmployee();
+    const emp = S.employees;
+    const mo  = pe * emp;
+    const yr  = mo * 12;
+    const sc  = score();
+    const t   = tier(sc);
+    const active = BENEFITS.filter(b=>S.active[b.id]);
+
+    // Main cost
+    const cEl = document.getElementById('sum-cost');
+    if (cEl) { cEl.textContent=fmt(pe); cEl.classList.add('pop'); setTimeout(()=>cEl.classList.remove('pop'),220); }
+
+    // Sublabel
+    const sEl = document.getElementById('sum-sublabel');
+    if (sEl) sEl.textContent = pe===0 ? 'Ative benefícios para calcular' : `${active.length} ${active.length===1?'benefício':'benefícios'} somados`;
+
+    // Comparison
+    const ct = currentTotal();
+    const compEl = document.getElementById('comp-live');
+    if (compEl) {
+      if (hasCurrentData() && pe > 0) {
+        compEl.classList.add('on');
+        const delta = pe - ct;
+        const sign  = delta >= 0 ? '+' : '';
+        document.getElementById('cl-ideal').textContent   = fmt(pe)+'/mês';
+        document.getElementById('cl-atual').textContent   = fmt(ct)+'/mês';
+        const dEl = document.getElementById('cl-delta');
+        dEl.textContent = sign+fmt(delta)+'/mês';
+        dEl.className   = 'comp-delta-val '+(delta>=0?'pos':'neg');
+        document.getElementById('cl-monthly').textContent = sign+fmt(delta*emp)+'/mês';
+        document.getElementById('cl-annual').textContent  = sign+fmt(delta*emp*12)+'/ano';
+      } else {
+        compEl.classList.remove('on');
+      }
+    }
+
+    // Market bar
+    const p = Math.min(96, t.pct);
+    document.getElementById('mkt-fill').style.width  = Math.min(100,t.pct)+'%';
+    document.getElementById('mkt-thumb').style.left  = p+'%';
+    document.getElementById('mkt-text').textContent  = pe===0 ? 'Configure os benefícios acima' : t.label;
+
+    // Breakdown
+    const bk = document.getElementById('bkdown');
+    if (bk) {
+      bk.innerHTML = active.length===0
+        ? '<p style="font-size:12px;color:var(--text-3);text-align:center;padding:6px 0">Nenhum benefício ativo</p>'
+        : active.map(b=>`<div class="bkdown-item"><div class="bkdown-dot" style="background:${b.color}"></div><span class="bkdown-name">${b.name}</span><span class="bkdown-val">${fmt(S.values[b.id])}</span></div>`).join('');
+    }
+
+    document.getElementById('sum-emp').textContent     = emp.toLocaleString('pt-BR');
+    document.getElementById('sum-monthly').textContent = fmt(mo);
+    document.getElementById('sum-annual').textContent  = fmt(yr);
+    const mEl = document.getElementById('mobile-cost');
+    if (mEl) mEl.textContent = fmt(pe);
+  }
+
+  // ── MODALS ────────────────────────────────────────────────────────
+  function openLeadModal() {
+    if (perEmployee()===0) { alert('Ative e configure pelo menos um benefício antes de gerar o diagnóstico.'); return; }
+    document.getElementById('lead-form-view').style.display='';
+    document.getElementById('lead-loading').style.display='none';
+    document.getElementById('lead-modal').classList.add('open');
+  }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+  function handleLeadSubmit(e) {
+    e.preventDefault();
+    leadData = {
+      name:    document.getElementById('f-name').value,
+      email:   document.getElementById('f-email').value,
+      company: document.getElementById('f-company').value,
+      role:    document.getElementById('f-role').value,
+      size:    document.getElementById('f-size').value
+    };
+    document.getElementById('lead-form-view').style.display='none';
+    document.getElementById('lead-loading').style.display='';
+    setTimeout(()=>{ closeModal('lead-modal'); showDiagnosis(); }, 2400);
+  }
+
+  // ── DIAGNOSIS ─────────────────────────────────────────────────────
+  function showDiagnosis() {
+    const pe  = perEmployee();
+    const ct  = currentTotal();
+    const emp = S.employees;
+    const mo  = pe * emp, yr = mo * 12;
+    const sc  = score(), t = tier(sc);
+    const active   = BENEFITS.filter(b=>S.active[b.id]);
+    const inactive = BENEFITS.filter(b=>!S.active[b.id] && b.opp);
+    const withComp = hasCurrentData();
+
+    const ret  = Math.min(38, active.length*5 + Math.round((pe/MKT_TOTAL)*15));
+    const eng  = Math.min(45, active.length*6 + Math.round((pe/MKT_TOTAL)*18));
+
+    // Market narrative
+    const mktPct = Math.round((pe/MKT_TOTAL)*100);
+    const tierEmoji = {below:'📉',average:'📊',above:'📈',top:'🏆'};
+    const tierLabel = {below:'Abaixo do mercado',average:'Na média do mercado',above:'Acima da média',top:'Top 10% do mercado'};
+    let heroTxt = '';
+    if (t.key==='below') heroTxt=`O pacote simulado representa <strong>${mktPct}% do investimento médio do mercado</strong>. Empresas similares investem em torno de <strong>${fmt(MKT_TOTAL)}/mês por colaborador</strong> em benefícios flexíveis — você está a <strong>${fmt(MKT_TOTAL-pe)}/mês por pessoa</strong> desse patamar. Isso cria uma desvantagem competitiva silenciosa: profissionais qualificados recebem em média 12 propostas por ano, e o pacote de benefícios é um dos 3 principais fatores de decisão de troca de emprego.`;
+    else if (t.key==='average') heroTxt=`O pacote simulado representa <strong>${mktPct}% do benchmark médio do setor</strong> — em linha com a média das empresas de porte similar. Você não perde talentos por causa de benefícios, mas também não se destaca na disputa pelos melhores profissionais. Para empresas em crescimento, estar na média significa competir no mesmo nível que todos os concorrentes.`;
+    else if (t.key==='above') heroTxt=`O pacote simulado supera o benchmark médio do mercado. Com <strong>${fmt(pe)}/mês por colaborador</strong>, você está acima de <strong>${Math.round((1-mktPct/100)*100)}% das empresas do seu porte</strong> — posição que se traduz diretamente em menor pressão de turnover e maior poder de atração de talentos qualificados.`;
+    else heroTxt=`Pacote de referência no mercado. Com <strong>${fmt(pe)}/mês por colaborador</strong>, você estaria no topo do mercado brasileiro de benefícios — posicionando a empresa como destino para os melhores profissionais e eliminando o benefício como fator de risco de perda de talentos.`;
+
+    let heroJump = '';
+    if (withComp && ct>0) {
+      const ctier = tier(Math.min(100,Math.round((ct/MKT_TOTAL)*60)));
+      if (ctier.key!==t.key) heroJump=`Com o pacote atual (${fmt(ct)}/colab./mês, posição "<strong>${tierLabel[ctier.key]}</strong>"), a migração para o pacote simulado elevaria seu posicionamento para "<strong>${tierLabel[t.key]}</strong>" — uma mudança de patamar que se reflete diretamente em atração, retenção e employer branding.`;
+      else heroJump=`Sua posição de mercado se manteria em "<strong>${tierLabel[t.key]}</strong>", com um incremento de <strong>${pe>=ct?'+':''}${fmt(pe-ct)}/colab./mês</strong> no investimento em benefícios.`;
+    }
+
+    // Score SVG
+    const r=36, circ=2*Math.PI*r;
+    const scColor = sc<40?'#60A5FA':sc<65?'#34D399':sc<85?'#FBBF24':'#F9A8BB';
+
+    // Comparison table
+    let cmpHTML='';
+    if (withComp) {
+      const rel = BENEFITS.filter(b=>S.active[b.id]||(S.current[b.id]||0)>0);
+      const dTot=pe-ct, dsign=dTot>=0?'+':'';
+      cmpHTML=`
+        <div style="margin-bottom:22px">
+          <div class="diag-section-title">Comparativo — hoje vs. pacote simulado</div>
+          <table class="cmp-table">
+            <thead><tr><th>Benefício</th><th>Hoje</th><th>Simulado</th><th>Diferença</th></tr></thead>
+            <tbody>
+              ${rel.map(b=>{
+                const curr=S.current[b.id]||0, novo=S.active[b.id]?S.values[b.id]:0, d=novo-curr;
+                return `<tr>
+                  <td><span style="font-size:13px">${b.icon}</span> ${b.name}</td>
+                  <td>${curr>0?fmt(curr):'<span style="color:var(--text-3)">—</span>'}</td>
+                  <td>${novo>0?fmt(novo):'<span style="color:var(--text-3)">—</span>'}</td>
+                  <td>${curr===0&&novo>0?'<span class="dnew">✦ Novo</span>':curr>0&&novo===0?'<span style="color:#DC2626;font-size:10px">Removido</span>':d===0?'<span style="color:var(--text-3)">—</span>':`<span class="${d>0?'dpos':'dneg'}">${d>0?'+':''}${fmt(d)}</span>`}</td>
+                </tr>`;
+              }).join('')}
+              <tr class="total-tr"><td>Total / colab./mês</td><td>${fmt(ct)}</td><td>${fmt(pe)}</td><td class="${dTot>=0?'dpos':'dneg'}">${dsign}${fmt(dTot)}</td></tr>
+            </tbody>
+          </table>
+          <div class="delta-sum ${dTot>=0?'pos':'neg'}">
+            Diferença de <strong>${dsign}${fmt(dTot)}/colab./mês</strong>
+            = <strong>${dsign}${fmt(dTot*emp)}/mês</strong>
+            = <strong>${dsign}${fmt(dTot*emp*12)}/ano</strong> para ${emp.toLocaleString('pt-BR')} colaboradores.
+          </div>
+        </div>`;
+    }
+
+    // Opportunities
+    const oppHTML = inactive.length>0 ? `
+      <div style="margin-bottom:22px">
+        <div class="diag-section-title">Oportunidades não exploradas</div>
+        ${inactive.slice(0,3).map(b=>`
+          <div class="opp-item" style="border-left-color:${b.color}">
+            <div class="opp-item-hd">
+              <span class="opp-icon">${b.icon}</span>
+              <span class="opp-name">${b.name}</span>
+              <span class="opp-price">≈ ${fmt(b.benchmark)}/colab./mês</span>
+            </div>
+            <p class="opp-text">${b.opp}</p>
+          </div>`).join('')}
+        ${inactive.length>3?`<p style="font-size:11px;color:var(--text-3);margin-top:4px">+ ${inactive.length-3} outra${inactive.length-3>1?'s':''} categorias disponíveis na plataforma.</p>`:''}
+      </div>` : '';
+
+    document.getElementById('diag-content').innerHTML = `
+      <div class="diag-hd">
+        <div class="diag-hd-text">
+          <div class="diag-pill">📊 Diagnóstico iFood Benefícios</div>
+          <h2>${leadData.company || 'Sua empresa'}</h2>
+          <p>${leadData.role} · ${emp.toLocaleString('pt-BR')} colaboradores · ${active.length} ${active.length===1?'categoria':'categorias'} ativas</p>
+        </div>
+        <div class="score-wrap">
+          <svg class="score-svg" viewBox="0 0 84 84">
+            <circle cx="42" cy="42" r="${r}" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="8"/>
+            <circle cx="42" cy="42" r="${r}" fill="none" stroke="${scColor}" stroke-width="8"
+              stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${(circ-sc/100*circ).toFixed(1)}"
+              stroke-linecap="round" transform="rotate(-90 42 42)"
+              style="transition:stroke-dashoffset 0.9s cubic-bezier(0.4,0,0.2,1)"/>
+            <text x="42" y="42" text-anchor="middle" dy="0.35em" font-size="18" font-weight="800" fill="#FDFDFD" font-family="Albert Sans,sans-serif">${sc}</text>
+          </svg>
+          <span class="score-lbl">Score do pacote</span>
+        </div>
+      </div>
+
+      <div class="diag-body">
+
+        <!-- Market Hero -->
+        <div class="mkt-hero ${t.key}">
+          <div class="mkt-hero-badge">${tierEmoji[t.key]} ${tierLabel[t.key]}</div>
+          <p class="mkt-hero-text">${heroTxt}</p>
+          ${heroJump?`<p class="mkt-hero-jump">${heroJump}</p>`:''}
+        </div>
+
+        <!-- Impact -->
+        <div class="impact-grid">
+          <div class="impact-card"><div class="impact-icon">📉</div><div><div class="impact-val" style="color:#059669">−${ret}%</div><div class="impact-lbl">Redução estimada de turnover</div></div></div>
+          <div class="impact-card"><div class="impact-icon">⚡</div><div><div class="impact-val" style="color:#7C3AED">+${eng}%</div><div class="impact-lbl">Aumento estimado de engajamento</div></div></div>
+          <div class="impact-card"><div class="impact-icon">🏆</div><div><div class="impact-val" style="color:#D97706">${active.length}/7</div><div class="impact-lbl">Categorias ativas no pacote</div></div></div>
+          <div class="impact-card"><div class="impact-icon">📅</div><div><div class="impact-val" style="color:var(--brand)">${fmt(yr)}</div><div class="impact-lbl">Investimento anual total</div></div></div>
+        </div>
+
+        ${cmpHTML}
+
+        <!-- Package composition -->
+        <div class="pkg-bars" style="margin-bottom:22px">
+          <div class="diag-section-title">Composição do pacote simulado</div>
+          ${active.map(b=>{const p=pe>0?Math.round((S.values[b.id]/pe)*100):0;return`<div class="pkg-bar"><div class="pkg-bar-hd"><span class="pkg-bar-nm"><span style="font-size:13px">${b.icon}</span>${b.name}</span><span class="pkg-bar-vl">${fmt(S.values[b.id])} · ${p}%</span></div><div class="pkg-bar-track"><div class="pkg-bar-fill" style="width:${p}%;background:${b.color}"></div></div></div>`;}).join('')}
+        </div>
+
+        ${oppHTML}
+
+        <!-- Totals recap -->
+        <div class="totals-recap">
+          <div class="recap-col"><div class="recap-lbl">Por colaborador</div><div class="recap-val">${fmt(pe)}<span>/mês</span></div></div>
+          <div class="recap-div"></div>
+          <div class="recap-col"><div class="recap-lbl">Total mensal</div><div class="recap-val">${fmt(mo)}</div></div>
+          <div class="recap-div"></div>
+          <div class="recap-col"><div class="recap-lbl">Total anual</div><div class="recap-val" style="color:var(--brand)">${fmt(yr)}</div></div>
+        </div>
+
+        <!-- CTA -->
+        <div class="diag-cta">
+          <div class="diag-cta-txt">
+            <h4>Quer implementar esse pacote?</h4>
+            <p>Um especialista iFood Benefícios pode configurar tudo em menos de uma semana.</p>
+          </div>
+          <button class="diag-cta-btn" onclick="openWhatsapp()">Falar com especialista →</button>
+        </div>
+
+        <div class="diag-actions">
+          <button class="btn-ghost" onclick="window.print()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Baixar diagnóstico
+          </button>
+          <button class="btn-outline" onclick="closeModal('diag-modal')">← Ajustar pacote</button>
+        </div>
+
+        <p class="diag-footnote">* Benchmarks baseados em: xxxxxxxx. Estimativas de impacto baseadas em médias de mercado — resultados reais variam conforme porte, setor e maturidade de RH.</p>
+      </div>
+    `;
+
+    document.getElementById('diag-modal').classList.add('open');
+  }
+
+  function openWhatsapp() {
+    const msg = encodeURIComponent(`Olá! Sou ${leadData.name||''} da ${leadData.company||''}. Simulei nosso pacote de benefícios e gostaria de conversar com um especialista iFood Benefícios.`);
+    window.open(`https://wa.me/551130031760?text=${msg}`,'_blank');
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────
+  renderCards();
+</script>
+</body>
+</html>
